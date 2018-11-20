@@ -24,7 +24,8 @@ listSchools()
               getData(caseHref)
                 .then(data => schoolData[caseName] = data);
             });
-          });
+          })
+          .catch(err => console.log(`Failed to load ${href}`));
         data[name] = schoolData;
         
         console.log(`Finished loading ${name}. ${i} out of ${schools.length}`);
