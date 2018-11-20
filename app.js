@@ -40,7 +40,7 @@ listSchools()
         if(i === schools.length - 1){
           doneLoading = true;
         }
-      }, 250 * i);
+      }, 500 * i);
     });
   });
 
@@ -53,7 +53,7 @@ const loadingInterval = setInterval(() => {
   }else if(doneLoading){
     clearInterval(loadingInterval);
   }
-}, 250);
+}, 500);
 
 app.get("/data", (req, res) => res.send(data));
 app.use(express.static(path.join(__dirname, "public")));
