@@ -59,7 +59,7 @@
             Object.keys(data[school]).forEach(caseName => {
               const files = data[school][caseName];
               files.forEach(file => {
-                if(file.report.includes(this.value)){
+                if(file.report.toLowerCase().includes(this.value.toLowerCase())){
                   resultElem.insertAdjacentHTML("beforeend", resultTemplate(file.report, file.href));
                 }
               });
