@@ -30,9 +30,7 @@ module.exports = {
   },
   getData: url => {
     return request(apiBase + url)
-      .then(html => {
-        console.log(`Loaded ${url}`);
-        
+      .then(html => {        
         const $ = cheerio.load(html);
         const rows = $("#tblRounds tr");
         const header = rows[0];
@@ -66,7 +64,7 @@ module.exports = {
               }
             }
             
-            ret.docUrl = apiBase + $(
+            ret.docUrl = $(
               $(elem).children()[docIndex]
             ).find("a").attr("href");
             

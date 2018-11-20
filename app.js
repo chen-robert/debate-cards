@@ -13,6 +13,8 @@ if(process.env.NODE_ENV === "production"){
 }
 
 const data = {};
+const stack = [];
+let doneLoading = false;
 listSchools()
   .then(schools => {
     schools.each((i, {name, href}) => {
@@ -20,19 +22,38 @@ listSchools()
         const schoolData = {};
         listCases(href)
           .then(cases => {
-            cases.each((i, {caseName, caseHref}) => {
-              getData(caseHref)
-                .then(data => schoolData[caseName] = data);
+            stack.push(() => {
+              cases.each((i, {caseName, caseHref}) => {
+                getData(caseHref)
+                  .then(data => schoolData[caseName] = data)
+                  .catch(err => console.log(`Failed to load ${caseHref}`));
+              });
             });
           })
           .catch(err => console.log(`Failed to load ${href}`));
         data[name] = schoolData;
         
-        console.log(`Finished loading ${name}. ${i} out of ${schools.length}`);
-      }, 1000 * i);
+        if(i % 10 == 0){
+          console.log(`Finished loading ${name}. ${i} out of ${schools.length}`);
+        }
+        
+        if(i === schools.length - 1){
+          doneLoading = true;
+        }
+      }, 250 * i);
     });
   });
+
+const loadingInterval = setInterval(() => {
+  const currFn = stack.pop();
+  console.log(`Stack size: ${stack.length}`);
   
+  if(currFn){
+    currFn();
+  }else if(doneLoading){
+    clearInterval(loadingInterval);
+  }
+}, 250);
 
 app.get("/data", (req, res) => res.send(data));
 app.use(express.static(path.join(__dirname, "public")));
