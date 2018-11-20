@@ -10,8 +10,11 @@
   "author": "Robert Chen",
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "compression": "^1.7.3",
     "express": "^4.16.4",
-    "express-sslify": "^1.2.0"
+    "express-sslify": "^1.2.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   }
 }

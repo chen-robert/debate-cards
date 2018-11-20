@@ -1,0 +1,74 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Card Scraper</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="author" content="Robert Chen">
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+
+        background-color: #eee;
+      }
+      body, html{
+        height: 100%;
+        width: 100%;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="margin-top: 25vh">
+      <h3>Scraper</h3>
+      <div>
+        <input id="search-box" style="border: none; width: 250px; height: 20px; margin: 20px; padding: 5px;" placeholder="Keyword"></input>
+      </div>
+      <div id="results">
+      
+      </div>
+    </div>
+    <script>
+      const resultElem = document.getElementById("results");
+      const resultTemplate = (report, doc) => `
+        <p>${report}</p>
+        <a href="${doc}">Download</a>
+      `;
+    
+      let data;
+      const httpRequest = new XMLHttpRequest();
+      httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+          data = JSON.parse(httpRequest.responseText);
+        }
+      };
+      httpRequest.open('GET', "/data");
+      httpRequest.send(); 
+      
+      window.onload = () => document.getElementById("search-box").onkeypress = function(e) {
+        if(e.keyCode === 13){
+          if(this.value === "")return;
+          while(resultElem.firstChild) {
+            resultElem.removeChild(resultElem.firstChild);
+          }
+          
+          Object.keys(data).forEach(school => {
+            Object.keys(data[school]).forEach(caseName => {
+              const files = data[school][caseName];
+              files.forEach(file => {
+                if(file.report.includes(this.value)){
+                  resultElem.insertAdjacentHTML("beforeend", resultTemplate(file.report, file.href));
+                }
+              });
+            });
+          });
+          
+          this.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>
