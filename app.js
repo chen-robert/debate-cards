@@ -13,7 +13,7 @@ if(process.env.NODE_ENV === "production"){
   app.use(enforce.HTTPS({trustProtoHeader: true}));
 }
 
-const data = {};
+const data = require(path.join(__dirname, "src/data.json"));
 const cleanData = data => {
   const ret = {};
   Object.keys(data).forEach(school => {
