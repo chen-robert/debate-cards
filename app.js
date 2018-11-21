@@ -22,7 +22,6 @@ db.getData()
 
     load(data, "https://hspolicy.debatecoaches.org");
     load(data, "https://opencaselist.paperlessdebate.com");
-    load(data, "https://hspf.debatecoaches.org/");
 
     app.get("/data", (req, res) => res.send(cleanData(data)));
     app.use(express.static(path.join(__dirname, "public")));
