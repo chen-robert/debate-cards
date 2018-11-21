@@ -3,7 +3,9 @@ const path = require("path");
 const compression = require("compression");
 const enforce = require("express-sslify");
 
+const db = require(path.join(__dirname, "src/database.js"));
 const load = require(path.join(__dirname, "src/load.js"));
+const {cleanData} = require(path.join(__dirname, "src/util.js"))
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,35 +15,19 @@ if(process.env.NODE_ENV === "production"){
   app.use(enforce.HTTPS({trustProtoHeader: true}));
 }
 
-const data = require(path.join(__dirname, "src/data.json"));
-const cleanData = data => {
-  const ret = {};
-  Object.keys(data).forEach(school => {
-    ret[school] = {};
-    Object.keys(data[school]).forEach(caseName => {
-      const completeRounds = data[school][caseName].filter(round => round.docUrl !== undefined);
-      if(completeRounds.length > 0){
-        ret[school][caseName] = completeRounds;
-      }
-    });
-    
-    if(Object.keys(ret[school]).length === 0){
-      delete ret[school];
-    }
-  });
-  return ret;
-}
+db.getData()
+  .then(data => {
+    data = data || {};
+    setInterval(() => console.log("Saving Data") || db.setData(data), 1 * 15 * 1000);
 
-const original = JSON.stringify(cleanData(data));
-load(data, "https://hspolicy.debatecoaches.org");
-load(data, "https://opencaselist.paperlessdebate.com");
-load(data, "https://hspf.debatecoaches.org/");
+    load(data, "https://hspolicy.debatecoaches.org");
+    load(data, "https://opencaselist.paperlessdebate.com");
+    load(data, "https://hspf.debatecoaches.org/");
 
+    app.get("/data", (req, res) => res.send(cleanData(data)));
+    app.use(express.static(path.join(__dirname, "public")));
+    app.get("*", (req, res) => res.redirect("/"));
 
-
-app.get("/data", (req, res) => res.send(cleanData(data)));
-app.get("/original", (req, res) => res.send(JSON.stringify(cleanData(data)) === original));
-app.use(express.static(path.join(__dirname, "public")));
-app.get("*", (req, res) => res.redirect("/"));
-
-app.listen(PORT, () => console.log(`Started server at port ${PORT}`));
+    app.listen(PORT, () => console.log(`Started server at port ${PORT}`));
+  })
+  .catch(err => console.error(err.stack));
