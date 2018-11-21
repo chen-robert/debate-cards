@@ -18,7 +18,7 @@ if(process.env.NODE_ENV === "production"){
 db.getData()
   .then(data => {
     data = data || {};
-    setInterval(() => console.log("Saving Data") || db.setData(data), 1 * 15 * 1000);
+    setInterval(() => console.log("Saving Data") || db.setData(data), 1 * 60 * 1000);
 
     load(data, "https://hspolicy.debatecoaches.org");
     load(data, "https://opencaselist.paperlessdebate.com");
