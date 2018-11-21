@@ -37,7 +37,7 @@ module.exports = (data, apiBase = "https://hspolicy.debatecoaches.org") => {
           if(i === schools.length - 1){
             doneLoading++;
           }
-        }, 1000 * i);
+        }, 1500 * i);
       });
     });
 }
@@ -51,4 +51,4 @@ const loadingInterval = setInterval(() => {
   }else if(fnCount !== 0 && doneLoading === fnCount){
     clearInterval(loadingInterval);
   }
-}, 1000);
+}, 2000);
