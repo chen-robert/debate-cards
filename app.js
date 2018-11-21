@@ -14,12 +14,6 @@ if(process.env.NODE_ENV === "production"){
 }
 
 const data = {};
-
-const original = JSON.stringify(cleanData(data));
-load(data, "https://hspolicy.debatecoaches.org");
-load(data, "https://opencaselist.paperlessdebate.com");
-load(data, "https://hspf.debatecoaches.org/");
-
 const cleanData = data => {
   const ret = {};
   Object.keys(data).forEach(school => {
@@ -37,6 +31,13 @@ const cleanData = data => {
   });
   return ret;
 }
+
+const original = JSON.stringify(cleanData(data));
+load(data, "https://hspolicy.debatecoaches.org");
+load(data, "https://opencaselist.paperlessdebate.com");
+load(data, "https://hspf.debatecoaches.org/");
+
+
 
 app.get("/data", (req, res) => res.send(cleanData(data)));
 app.get("/original", (req, res) => res.send(JSON.stringify(cleanData(data)) === original));
