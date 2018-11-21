@@ -37,7 +37,7 @@ module.exports = (data, apiBase = "https://hspolicy.debatecoaches.org") => {
           if(i === schools.length - 1){
             doneLoading++;
           }
-        }, 1500 * i);
+        }, 2500 * i);
       });
     });
 }

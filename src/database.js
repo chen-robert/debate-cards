@@ -15,7 +15,7 @@ module.exports = {
   },
   getData: () => {
     return client.query("SELECT text FROM data LIMIT 1")
-      .then(res => res.rows[0].text)
+      .then(res => res.rows[0] && res.rows[0].text)
       .catch(err => console.error(err.stack));
   }
 }
