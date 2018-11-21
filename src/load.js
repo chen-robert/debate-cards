@@ -17,6 +17,8 @@ module.exports = (data, apiBase = "https://hspolicy.debatecoaches.org") => {
           const schoolData = {};
           listCases(href)
             .then(cases => {
+              if(cases.length === 0)return;
+              
               stack.push(() => {
                 cases.each((i, {caseName, caseHref}) => {
                   getData(caseHref)
@@ -35,7 +37,7 @@ module.exports = (data, apiBase = "https://hspolicy.debatecoaches.org") => {
           if(i === schools.length - 1){
             doneLoading++;
           }
-        }, 1500 * i);
+        }, 1000 * i);
       });
     });
 }

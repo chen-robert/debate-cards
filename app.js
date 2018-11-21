@@ -13,12 +13,33 @@ if(process.env.NODE_ENV === "production"){
   app.use(enforce.HTTPS({trustProtoHeader: true}));
 }
 
-const data = require(path.join(__dirname, "src/data.json"));
+const data = {};
+
+const original = JSON.stringify(cleanData(data));
 load(data, "https://hspolicy.debatecoaches.org");
 load(data, "https://opencaselist.paperlessdebate.com");
+load(data, "https://hspf.debatecoaches.org/");
 
+const cleanData = data => {
+  const ret = {};
+  Object.keys(data).forEach(school => {
+    ret[school] = {};
+    Object.keys(data[school]).forEach(caseName => {
+      const completeRounds = data[school][caseName].filter(round => round.docUrl !== undefined);
+      if(completeRounds.length > 0){
+        ret[school][caseName] = completeRounds;
+      }
+    });
+    
+    if(Object.keys(ret[school]).length === 0){
+      delete ret[school];
+    }
+  });
+  return ret;
+}
 
-app.get("/data", (req, res) => res.send(data));
+app.get("/data", (req, res) => res.send(cleanData(data)));
+app.get("/original", (req, res) => res.send(JSON.stringify(cleanData(data)) === original));
 app.use(express.static(path.join(__dirname, "public")));
 app.get("*", (req, res) => res.redirect("/"));
 
