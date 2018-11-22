@@ -68,6 +68,7 @@
       `;
     
       let data;
+      let timeouts = [];
       const httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -83,19 +84,26 @@
           while(resultElem.firstChild) {
             resultElem.removeChild(resultElem.firstChild);
           }
+          timeouts.forEach(timeout => clearTimeout(timeout));
+          timeouts = [];
           
+          
+          const items = [];
           Object.keys(data).forEach(school => {
             Object.keys(data[school]).forEach(caseName => {
               const files = data[school][caseName];
               files.forEach(file => {
                 if(file.report.toLowerCase().includes(this.value.toLowerCase())){
                   if(file.docUrl !== undefined){
-                    resultElem.insertAdjacentHTML("beforeend", resultTemplate(school, caseName, file.report, file.docUrl));
+                    items.push(resultTemplate(school, caseName, file.report, file.docUrl));
                   }
                 }
               });
             });
           });
+          
+          resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
+          items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
           
           this.value = "";
         }
