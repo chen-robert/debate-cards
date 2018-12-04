@@ -21,6 +21,7 @@ db.getData()
     setInterval(() => console.log("Saving Data") || db.setData(data), 1 * 60 * 1000);
 
     load(data, "https://hspolicy.debatecoaches.org");
+    load(data, "https://hsld.debatecoaches.org/");
     load(data, "https://opencaselist.paperlessdebate.com");
 
     app.get("/data", (req, res) => res.send(cleanData(data)));
