@@ -1,8 +1,10 @@
 const pg = require("pg");
 const client = new pg.Client({
-  connectionString: process.env.DATABASE_URL || process.env.DEBATE_CARDS_DB_URL,
-  ssl: true  
+  connectionString: process.env.DEBATE_CARDS_DB_URL || process.env.DATABASE_URL,
+  ssl: false  
 });
+
+console.log(process.env.DEBATE_CARDS_DB_URL);
 
 client.connect();
 
