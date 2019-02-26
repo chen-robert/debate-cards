@@ -6,7 +6,7 @@ const {addRound} = require(__dirname + "/database.js");
 
 const batchSize = 100;
 
-module.exports = (database) => {
+const load = (database) => {
   let len = 0;
   const cases = [];
   const rounds = [];
@@ -75,5 +75,6 @@ module.exports = (database) => {
   }
   
   appendNext();
-  
 }
+
+load("hspolicy18");

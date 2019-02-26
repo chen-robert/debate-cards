@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 
 const {searchRounds} = require(path.join(__dirname, "src/database.js"));
-const load = require(path.join(__dirname, "src/load.js"));
 const {cleanData} = require(path.join(__dirname, "src/util.js"))
 
 const app = express();
@@ -14,5 +13,3 @@ app.get("/search", (req, res) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.listen(PORT, () => console.log(`Started server at port ${PORT}`));
-
-load("hspolicy18");
