@@ -4,23 +4,18 @@ const client = new pg.Client({
   ssl: false  
 });
 
-console.log(process.env.DEBATE_CARDS_DB_URL);
-
 client.connect();
 
-client.query("CREATE TABLE data(text JSONB)")
-  .then(() => console.log("Created table data"))
-  .catch(() => {});
-
 module.exports = {
-  setData: data => {
-    client.query("DELETE FROM data")
-      .then(() => client.query("INSERT INTO data(text) VALUES($1) RETURNING *", [data]))
-      .catch(err => console.error(err.stack));
+  addRound: (time, team, case_name, report, document) => {
+    client.query("INSERT INTO rounds(time, team, case_name, report, document) VALUES($1, $2, $3, $4, $5) ON CONFLICT ON CONSTRAINT uq DO NOTHING", 
+      [time, team, case_name, report, document]
+    )
   },
-  getData: () => {
-    return client.query("SELECT text FROM data LIMIT 1")
-      .then(res => res.rows[0] && res.rows[0].text)
-      .catch(err => console.error(err.stack));
+  searchRounds: (term, callback) => {
+    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC", 
+      [term]
+    )
+    .then(res => callback(res.rows));    
   }
 }

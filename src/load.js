@@ -1,53 +1,79 @@
+const request = require("request-promise").defaults({ jar: true });
+const parse = require("xml2js").parseString;
 const path = require("path");
-const api = require(path.join(__dirname, "api.js"));
 
+const {addRound} = require(__dirname + "/database.js");
 
-const stack = [];
-let doneLoading = 0;
-let fnCount = 0;
+const batchSize = 10;
 
-module.exports = (data, apiBase = "https://hspolicy.debatecoaches.org") => {
-  const {listSchools, listCases, getData} = api(apiBase);
-  fnCount++;
-
-  listSchools()
-    .then(schools => {
-      schools.each((i, {name, href}) => {
-        setTimeout(() => {
-          const schoolData = {};
-          listCases(href)
-            .then(cases => {
-              if(cases.length === 0)return;
-
-              stack.push(() => {
-                cases.each((i, {caseName, caseHref}) => {
-                  getData(caseHref)
-                    .then(data => schoolData[caseName] = data)
-                    .catch(err => console.log(`Failed to load ${caseHref}`));
-                });
-              });
-            })
-            .catch(err => console.log(`Failed to load ${href}`));
-          data[name] = schoolData;
-
-          if(i % 10 == 0){
-            console.log(`Finished loading ${name}. ${i} out of ${schools.length}`);
-          }
-
-          if(i === schools.length - 1){
-            doneLoading++;
-          }
-        }, 5000 * i);
+module.exports = (database) => {
+  let len = 0;
+  const cases = [];
+  const rounds = [];
+  
+  const processRounds = () => {
+    if(rounds.length % 10 === 0) console.log(`${rounds.length} rounds left`);
+    
+    if(rounds.length === 0){
+      return;
+    }
+    const roundName = rounds.pop();
+    
+    request(`${roundName}`)
+      .then(html => {
+        const data = parse(html, (err, res) => {
+          const objData = {};
+          res.object.property.forEach(property => objData[property["$"].name] = property.value);
+          
+          const {space, pageName} = res.object;
+          
+          addRound(new Date(objData["EntryDate"][0]).getTime(), space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0]);
+          
+          processRounds();
+        });
       });
-    });
-}
-
-const loadingInterval = setInterval(() => {
-  const currFn = stack.pop();
-
-  if(currFn){
-    currFn();
-  }else if(fnCount !== 0 && doneLoading === fnCount){
-    clearInterval(loadingInterval);
   }
-}, 2500);
+  
+  const processCases = () => {
+    if(cases.length % 10 === 0) console.log(`${cases.length} cases left`);
+    
+    if(cases.length === 0){
+      return processRounds();
+    }
+    const caseName = cases.pop();
+    
+    request(`${caseName}/objects/Caselist.RoundClass?number=100`)
+      .then(html => {
+        const data = parse(html, (err, res) => {
+          try{
+            res.objects.objectSummary.forEach(round => rounds.push(round.link[0]["$"].href));
+          }catch(e){
+            console.error(e);
+          }
+          
+          processCases();
+        });
+      });
+  }
+  
+  const appendNext = () => {
+    console.log(`Loading #${len} cases`);
+    
+    request(`https://openev.debatecoaches.org/rest/wikis/${database}/query?q=object:Caselist.RoundClass&number=${batchSize}&type=solr&start=${len}`)
+      .then(html => {
+        len += batchSize;
+        const data = parse(html, (err, res) => {
+          res.searchResults.searchResult.forEach(res => cases.push(res.link[0]["$"].href));
+          
+          if(len < 10 && res.searchResults.searchResult.length != 0){
+            appendNext();
+          }else{
+            processCases();
+          }
+        });
+      });
+  }
+  
+  appendNext();
+  
+}
