@@ -15,7 +15,7 @@ const load = (database) => {
     if(rounds.length % 10 === 0) console.log(`${rounds.length} rounds left`);
     
     if(rounds.length === 0){
-      return;
+      return appendNext();
     }
     const roundName = rounds.pop();
     
@@ -56,7 +56,7 @@ const load = (database) => {
       });
   }
   
-  const appendNext = () => {
+  var appendNext = () => {
     console.log(`Loading #${len} cases`);
     
     request(`https://openev.debatecoaches.org/rest/wikis/${database}/query?q=object:Caselist.RoundClass&number=${batchSize}&type=solr&start=${len}`)
@@ -66,9 +66,9 @@ const load = (database) => {
           res.searchResults.searchResult.forEach(res => cases.push(res.link[0]["$"].href));
           
           if(res.searchResults.searchResult.length != 0){
-            appendNext();
-          }else{
             processCases();
+          }else{
+            return;
           }
         });
       });

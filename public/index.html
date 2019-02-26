@@ -72,7 +72,7 @@
       const resultTemplate = (school, caseName, report, doc) => `
         <h4>${school} / ${caseName}</h4>
         <p style="max-height: 250px; overflow-y: auto;">${report}</p>
-        <a class="${doc === undefined? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
+        <a class="${doc.trim() === ""? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
       `;
     
       let timeouts = [];
@@ -93,9 +93,10 @@
           const httpRequest = new XMLHttpRequest();
           httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-              const items = JSON.parse(httpRequest.responseText).map(({team, case_name, report, document}) => resultTemplate(team, case_name, report, document));
-              
-              console.log(items);
+              const items = JSON.parse(httpRequest.responseText)
+                .filter(item => item.document.trim() !== "" || settings.showEmpty)
+                .map(({team, case_name, report, document}) => resultTemplate(team, case_name, report, document));
+                
           
               resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
               items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
