@@ -8,11 +8,11 @@ const {cleanData} = require(path.join(__dirname, "src/util.js"))
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-load("hspolicy18");
-
 app.get("/search", (req, res) => {
   searchRounds(decodeURIComponent(req.query.term), (data) => res.send(JSON.stringify(data)));
 });
 app.use(express.static(path.join(__dirname, "public")));
 
 app.listen(PORT, () => console.log(`Started server at port ${PORT}`));
+
+load("hspolicy18");
