@@ -4,7 +4,7 @@ const path = require("path");
 
 const {addRound} = require(__dirname + "/database.js");
 
-const batchSize = 10;
+const batchSize = 100;
 
 module.exports = (database) => {
   let len = 0;
@@ -65,7 +65,7 @@ module.exports = (database) => {
         const data = parse(html, (err, res) => {
           res.searchResults.searchResult.forEach(res => cases.push(res.link[0]["$"].href));
           
-          if(len < 10 && res.searchResults.searchResult.length != 0){
+          if(res.searchResults.searchResult.length != 0){
             appendNext();
           }else{
             processCases();

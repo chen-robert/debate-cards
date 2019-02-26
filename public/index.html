@@ -75,16 +75,7 @@
         <a class="${doc === undefined? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
       `;
     
-      let data;
       let timeouts = [];
-      const httpRequest = new XMLHttpRequest();
-      httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-          data = JSON.parse(httpRequest.responseText);
-        }
-      };
-      httpRequest.open('GET', "/data");
-      httpRequest.send(); 
       
       window.onload = () => document.getElementById("search-box").onkeypress = function(e) {
         if(e.keyCode === 13){
@@ -99,24 +90,21 @@
             showEmpty: document.getElementById("docs").checked
           }
           
-          const items = [];
-          Object.keys(data).forEach(school => {
-            Object.keys(data[school]).forEach(caseName => {
-              const files = data[school][caseName];
-              files.forEach(file => {
-                if(file.report.toLowerCase().includes(this.value.toLowerCase())){
-                  if(settings.showEmpty || file.docUrl !== undefined){
-                    items.push(resultTemplate(school, caseName, file.report, file.docUrl));
-                  }
-                }
-              });
-            });
-          });
+          const httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = () => {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+              const items = JSON.parse(httpRequest.responseText).map(({team, case_name, report, document}) => resultTemplate(team, case_name, report, document));
+              
+              console.log(items);
           
-          resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
-          items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
-          
-          this.value = "";
+              resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
+              items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
+              
+              this.value = "";
+            }
+          };
+          httpRequest.open('GET', `/search?term=${encodeURIComponent(this.value)}`);
+          httpRequest.send();           
         }
       }
     </script>
