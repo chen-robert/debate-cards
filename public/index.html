@@ -62,6 +62,8 @@
         <br>
         <input type="checkbox" id="docs">
         <label for="docs">Show Empty Documents</label>
+        <input type="checkbox" id="policy">
+        <label for="policy">Show Policy Only</label>
       </div>
       <div id="results">
       
@@ -69,8 +71,8 @@
     </div>
     <script>
       const resultElem = document.getElementById("results");
-      const resultTemplate = (school, caseName, report, doc) => `
-        <h4>${school} / ${caseName}</h4>
+      const resultTemplate = (wiki, school, caseName, report, doc) => `
+        <h4>${wiki} / ${school}, ${caseName}</h4>
         <p style="max-height: 250px; overflow-y: auto;">${report}</p>
         <a class="${doc.trim() === ""? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
       `;
@@ -87,7 +89,8 @@
           timeouts = [];
           
           const settings = {
-            showEmpty: document.getElementById("docs").checked
+            showEmpty: document.getElementById("docs").checked,
+            policyOnly: document.getElementById("policy").checked
           }
           
           const httpRequest = new XMLHttpRequest();
@@ -95,7 +98,8 @@
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
               const items = JSON.parse(httpRequest.responseText)
                 .filter(item => item.document.trim() !== "" || settings.showEmpty)
-                .map(({team, case_name, report, document}) => resultTemplate(team, case_name, report, document));
+                .filter(item => !settings.policyOnly || item.wiki.includes("policy"))
+                .map(({wiki, team, case_name, report, document}) => resultTemplate(wiki, team, case_name, report, document));
                 
           
               resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
