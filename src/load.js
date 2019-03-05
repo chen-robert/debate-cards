@@ -7,7 +7,7 @@ const {addRound} = require(__dirname + "/database.js");
 const batchSize = 100;
 
 const load = (database) => {
-  let len = 0;
+  let len = 9300;
   const cases = [];
   const rounds = [];
   
@@ -25,9 +25,9 @@ const load = (database) => {
           const objData = {};
           res.object.property.forEach(property => objData[property["$"].name] = property.value);
           
-          const {space, pageName} = res.object;
+          const {space, pageName, wiki} = res.object;
           
-          addRound(new Date(objData["EntryDate"][0]).getTime(), space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0]);
+          addRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0]);
           
           processRounds();
         });
@@ -59,7 +59,7 @@ const load = (database) => {
   var appendNext = () => {
     console.log(`Loading #${len} cases`);
     
-    request(`https://openev.debatecoaches.org/rest/wikis/${database}/query?q=object:Caselist.RoundClass&number=${batchSize}&type=solr&start=${len}`)
+    request(`https://openev.debatecoaches.org/rest/wikis/query?q=object:Caselist.RoundClass&number=${batchSize}&type=solr&start=${len}`)
       .then(html => {
         len += batchSize;
         const data = parse(html, (err, res) => {

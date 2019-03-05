@@ -12,6 +12,7 @@ const queries = [
   `CREATE TABLE rounds(
     id SERIAL PRIMARY KEY, 
     time BIGINT not null,
+    wiki TEXT not null,
     team TEXT not null,    
     case_name TEXT not null,
     report TEXT not null,
