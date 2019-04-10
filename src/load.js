@@ -6,8 +6,8 @@ const {addRound} = require(__dirname + "/database.js");
 
 const batchSize = 100;
 
-const load = (database) => {
-  let len = 9300;
+const load = () => {
+  let len = 0;
   const cases = [];
   const rounds = [];
   
@@ -59,7 +59,7 @@ const load = (database) => {
   var appendNext = () => {
     console.log(`Loading #${len} cases`);
     
-    request(`https://openev.debatecoaches.org/rest/wikis/query?q=object:Caselist.RoundClass&number=${batchSize}&type=solr&start=${len}`)
+    request(`https://openev.debatecoaches.org/rest/wikis/query?q=object:Caselist.RoundClass%20AND%20attdate:[NOW/DAY-30DAYS%20TO%20NOW/DAY]&number=${batchSize}&type=solr&start=${len}`)
       .then(html => {
         len += batchSize;
         const data = parse(html, (err, res) => {
@@ -77,4 +77,4 @@ const load = (database) => {
   appendNext();
 }
 
-load("hspolicy18");
+load();
