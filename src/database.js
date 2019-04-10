@@ -13,7 +13,7 @@ module.exports = {
     )
   },
   searchRounds: (term, callback) => {
-    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC", 
+    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC LIMIT 1000", 
       [term]
     )
     .then(res => callback(res.rows));    
