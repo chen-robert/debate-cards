@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>Card Scraper</title>
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+
     <meta name="author" content="Robert Chen">
     <style>
       body {
@@ -12,7 +14,7 @@
         justify-content: center;
         text-align: center;
 
-        background-color: #eee;
+        background-color: white;
       }
       body, html{
         height: 100%;
@@ -20,19 +22,21 @@
         margin: 0;
       }
       *{
-        font-family: Trebuchet MS, sans-serif;
+        font-family: Trebuchet MS, FontAwesome, sans-serif;
       }
       #results{
         padding: 25px;
       }
       #search-box{
         border: 1px solid #ddd;
+        background-color: #eee;
+        text-align: center;
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
         outline: none;
         
-        border-radius: 15px;
+        border-radius: 5px;
       }
       #search-box:focus{
         border: 1px solid #888;
@@ -55,15 +59,16 @@
   </head>
   <body>
     <div style="margin-top: 25vh">
-      <h3>Scraper</h3>
-      <i>Sponsored by Public Forum Debate</i>
+      <h1>Card Scraper</h1>
       <div>
-        <input id="search-box" style="width: 250px; height: 20px; margin: 20px; padding: 10px; transition-duration: 250ms;" placeholder="Keyword"></input>
+        <input id="search-box" style="width: 350px; height: 15px; padding: 10px; transition-duration: 250ms;" placeholder="&#xF002; Search" autofocus></input>
         <br>
-        <input type="checkbox" id="docs">
-        <label for="docs">Show Empty Documents</label>
-        <input type="checkbox" id="policy">
-        <label for="policy">Show Policy Only</label>
+        <div style="display: none">
+          <input type="checkbox" id="docs">
+          <label for="docs">Show Empty Documents</label>
+          <input type="checkbox" id="policy">
+          <label for="policy">Show Policy Only</label>
+        </div>
       </div>
       <div id="results">
       
@@ -72,9 +77,13 @@
     <script>
       const resultElem = document.getElementById("results");
       const resultTemplate = (wiki, school, caseName, report, doc) => `
-        <h4>${wiki} / ${school}, ${caseName}</h4>
-        <p style="max-height: 250px; overflow-y: auto;">${report}</p>
-        <a class="${doc.trim() === ""? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
+        <div style="padding: 20px; border-radius: 15px; margin: 20px 0; background: #eee"> 
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h4>${wiki}</h4><h3>${school}, ${caseName}</h3>
+            <a style="float: right" class="${doc.trim() === ""? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
+          </div>
+          <p style="text-align: left; max-height: 250px; overflow-y: auto;">${report}</p>
+        </div>
       `;
     
       let timeouts = [];
