@@ -1,14 +1,11 @@
 const { Client } = require("pg");
 const async = require("async");
-const connectionString = process.env.DEBATE_CARDS_DB_URL || process.env.DATABASE_URL;
-
-console.log(connectionString);
+const {connectionString} = require("./config");
 
 const client = new Client({ connectionString });
 client.connect();
 
 const queries = [
-  "DROP TABLE rounds",
   `CREATE TABLE rounds(
     id SERIAL PRIMARY KEY, 
     time BIGINT not null,

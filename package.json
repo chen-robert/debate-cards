@@ -5,19 +5,22 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js --watch app.js --watch src",
+    "db:init": "node src/db/init.js",
+    "dev": "nodemon app.js"
   },
   "author": "Robert Chen",
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.2",
     "cheerio": "^1.0.0-rc.2",
-    "compression": "^1.7.3",
     "express": "^4.16.4",
-    "express-sslify": "^1.2.0",
     "pg": "^7.6.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
   }
 }

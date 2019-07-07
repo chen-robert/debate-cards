@@ -1,8 +1,9 @@
+global.__rootdir = __dirname;
+
 const express = require("express");
 const path = require("path");
 
-const {searchRounds} = require(path.join(__dirname, "src/database.js"));
-const {cleanData} = require(path.join(__dirname, "src/util.js"))
+const {searchRounds} = require(path.join(__dirname, "src/db"));
 
 const app = express();
 const PORT = process.env.PORT || 3000;

@@ -1,7 +1,8 @@
 const pg = require("pg");
+const {connectionString} = require("./config");
+
 const client = new pg.Client({
-  connectionString: process.env.DEBATE_CARDS_DB_URL || process.env.DATABASE_URL,
-  ssl: false  
+  connectionString
 });
 
 client.connect();
@@ -13,7 +14,7 @@ module.exports = {
     )
   },
   searchRounds: (term, callback) => {
-    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC LIMIT 1000", 
+    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC LIMIT 2500", 
       [term]
     )
     .then(res => callback(res.rows));    
