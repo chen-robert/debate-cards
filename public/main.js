@@ -14,7 +14,6 @@ let timeouts = [];
 window.onload = () => {
   document.getElementById("search-box").onkeypress = function(e) {
     if(e.keyCode === 13){
-      if(this.value === "")return;
       while(resultElem.firstChild) {
         resultElem.removeChild(resultElem.firstChild);
       }
