@@ -13,9 +13,16 @@ module.exports = {
       [time, wiki, team, case_name, report, document]
     )
   },
-  searchRounds: (term, callback) => {
-    client.query("SELECT * FROM rounds WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') ORDER BY time DESC LIMIT 2500", 
-      [term]
+  searchRounds: (term, team, caseName, callback) => {
+    client.query(`
+      SELECT * FROM rounds 
+      WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') 
+      AND UPPER(team) LIKE UPPER('%' || $2 || '%')
+      AND UPPER(case_name) LIKE UPPER('%' || $3 || '%')
+      ORDER BY time DESC 
+      LIMIT 2500
+      `, 
+      [term, team, caseName]
     )
     .then(res => callback(res.rows));    
   }

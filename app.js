@@ -9,8 +9,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get("/search", (req, res) => {
-  console.log(`Searched for ${req.query.term}`);
-  searchRounds(decodeURIComponent(req.query.term), (data) => res.send(JSON.stringify(data)));
+  const {term, team, caseName} = req.query;
+  console.log(`Searched for ${term}, ${team} / ${caseName}`);
+  searchRounds(term, team, caseName, (data) => res.send(JSON.stringify(data)));
 });
 app.use(express.static(path.join(__dirname, "public")));
 
