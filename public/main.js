@@ -12,7 +12,7 @@ const resultTemplate = (wiki, school, caseName, report, doc) => `
 let timeouts = [];
 
 window.onload = () => {
-  document.getElementById("search-box").onkeypress = function(e) {
+  const check = (e) => {
     if(e.keyCode === 13){
       while(resultElem.firstChild) {
         resultElem.removeChild(resultElem.firstChild);
@@ -37,15 +37,20 @@ window.onload = () => {
           resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
           items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
           
-          this.value = "";
+          document.getElementById("search-box").value = "";
         }
       };
+      const term = encodeURIComponent(document.getElementById("search-box").value);
       const team = encodeURIComponent(document.getElementById("team").value);
       const caseName = encodeURIComponent(document.getElementById("caseName").value);
-      httpRequest.open('GET', `/search?term=${encodeURIComponent(this.value)}&team=${team}&caseName=${caseName}`);
+      httpRequest.open('GET', `/search?term=${term}&team=${team}&caseName=${caseName}`);
       httpRequest.send();           
     }
   }
+  document.getElementById("search-box").onkeypress = check;
+  document.getElementById("team").onkeypress = check;
+  document.getElementById("caseName").onkeypress = check;
+
   document.getElementById("options-button").onclick = () => {
     document.getElementById("options").classList.toggle("clicked");
   }
