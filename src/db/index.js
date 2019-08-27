@@ -25,5 +25,25 @@ module.exports = {
       [term, team, caseName]
     )
     .then(res => callback(res.rows));    
+  },
+  getAllRounds: (callback) => {
+    client.query(`
+      SELECT * FROM rounds
+    `)
+    .then(res => callback(res.rows));
+  },
+  updateDocument: (id, doc) => {
+    return client.query(`
+      UPDATE rounds
+      SET document = $1
+      WHERE id = $2
+    `,
+    [doc, id]
+    );
+  },
+  countRounds: callback => {
+    return client.query(`
+      SELECT COUNT(*) FROM rounds
+    `).then(res => callback(res.rows));
   }
 }
