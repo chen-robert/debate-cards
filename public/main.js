@@ -1,5 +1,33 @@
-const resultElem = document.getElementById("results");
-const resultTemplate = (wiki, school, caseName, report, doc) => `
+const flat = new URLSearchParams(window.location.search).get("neo") != null;
+const resultElem = document.getElementById(flat? "results2": "results");
+
+const resultTemplate = (wiki, school, caseName, report, doc) => {
+
+let side = "Unknown";
+caseName = caseName.trim();
+if(caseName.endsWith("Aff")) {
+  caseName = caseName.substring(0, caseName.length - "Aff".length)
+  side = "Aff";
+} else if(caseName.endsWith("Neg")) {
+  caseName = caseName.substring(0, caseName.length - "Neg".length)
+  side = "Neg";
+}
+
+let idx = doc.lastIndexOf("/") + 1;
+const docName = doc.substring(idx);
+
+
+if(flat) return `
+<tr>
+  <td style="width: 25px">${wiki}</td>
+  <td style="width: 150px">${school} ${caseName}</td>
+  <td>${side}</td>
+  <td style="width: 150px"><a href="${doc}">${decodeURIComponent(docName)}</a></td>
+  <td style="text-align: left">${report}</td>
+</tr>
+`;
+
+return `
   <div style="padding: 20px; border-radius: 15px; margin: 20px 0; background: #eee"> 
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <h4>${wiki}</h4><h3>${school}, ${caseName}</h3>
@@ -8,7 +36,7 @@ const resultTemplate = (wiki, school, caseName, report, doc) => `
     <p style="text-align: left; max-height: 250px; overflow-y: auto;">${report}</p>
   </div>
 `;
-
+}
 let timeouts = [];
 
 window.onload = () => {
@@ -34,7 +62,7 @@ window.onload = () => {
             .map(({wiki, team, case_name, report, document}) => resultTemplate(wiki, team, case_name, report, document));
             
       
-          resultElem.insertAdjacentHTML("beforeend", `<i>${items.length} results found</i>`);
+          document.getElementById("counter").innerText = `${items.length} results found`;
           items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
           
           document.getElementById("search-box").value = "";

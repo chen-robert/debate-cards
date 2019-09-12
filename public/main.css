@@ -58,3 +58,12 @@ body, html{
   max-height: 250px;
   transition-duration: 250ms;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+tr td{
+  padding: 10px;
+  border: 1px solid black;
+}

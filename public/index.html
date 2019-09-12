@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="/main.css">
   </head>
   <body>
-    <div style="margin-top: 25vh">
+    <div>
       <h1>Card Scraper</h1>
       <div>
-        <input class="form--input" id="search-box" style="width: 350px; height: 15px;" placeholder="&#xF002; Search" autofocus></input>
+        <input class="form--input" id="search-box" style="width: 100%; height: 15px;" placeholder="&#xF002; Search" autofocus></input>
         <br>
         <button id="options-button">Options</button>
         <div id="options" class="options">
@@ -29,9 +29,14 @@
           <input class="form--input" id="caseName" placeholder="Case Name">
         </div>
       </div>
+      <i id="counter"></i>
       <div id="results">
       
       </div>
+      <table border="0">
+        <tbody id="results2">
+        </tbody>
+      </table>
     </div>
     <script src="/main.js"></script>
   </body>
