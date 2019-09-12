@@ -24,7 +24,8 @@ body, html{
   -moz-appearance: none;
   appearance: none;
   outline: none;
-  
+ 
+  max-width: 500px;
   border-radius: 5px;
   padding: 10px; 
   transition-duration: 250ms;

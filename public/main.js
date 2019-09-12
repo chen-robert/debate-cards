@@ -16,6 +16,7 @@ if(caseName.endsWith("Aff")) {
 let idx = doc.lastIndexOf("/") + 1;
 const docName = doc.substring(idx);
 
+report = report.split("\n").join("<br>")
 
 if(flat) return `
 <tr>
@@ -63,7 +64,7 @@ window.onload = () => {
             
       
           document.getElementById("counter").innerText = `${items.length} results found`;
-          items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 10 * i)));
+          items.forEach((html, i) => timeouts.push(setTimeout(() => resultElem.insertAdjacentHTML("beforeend", html), 1 * i)));
           
           document.getElementById("search-box").value = "";
         }
