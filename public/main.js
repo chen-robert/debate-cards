@@ -24,7 +24,7 @@ if(flat) return `
   <td style="width: 150px">${school} ${caseName}</td>
   <td>${side}</td>
   <td style="width: 150px"><a href="${doc}">${decodeURIComponent(docName)}</a></td>
-  <td style="text-align: left">${report}</td>
+  <td style="text-align: left; width: 100%">${report}</td>
 </tr>
 `;
 
