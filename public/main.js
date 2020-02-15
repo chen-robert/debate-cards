@@ -1,7 +1,7 @@
-const flat = new URLSearchParams(window.location.search).get("neo") != null;
+const flat = true;
 const resultElem = document.getElementById(flat? "results2": "results");
 
-const resultTemplate = (wiki, school, caseName, report, doc) => {
+const resultTemplate = (wiki, school, caseName, report, doc, time, tournament) => {
 
 let side = "Unknown";
 caseName = caseName.trim();
@@ -18,31 +18,26 @@ const docName = doc.substring(idx);
 
 report = report.split("\n").join("<br>")
 
-if(flat) return `
+const date = new Date(+time);
+
+return `
 <tr>
+  <td>${date.toLocaleDateString()}</td>
   <td style="width: 25px">${wiki}</td>
   <td style="width: 150px">${school} ${caseName}</td>
+  <td style="width: 150px">${tournament}</td>
   <td>${side}</td>
   <td style="width: 150px"><a href="${doc}">${decodeURIComponent(docName)}</a></td>
   <td style="text-align: left; width: 100%">${report}</td>
 </tr>
 `;
-
-return `
-  <div style="padding: 20px; border-radius: 15px; margin: 20px 0; background: #eee"> 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h4>${wiki}</h4><h3>${school}, ${caseName}</h3>
-      <a style="float: right" class="${doc.trim() === ""? "disabled": ""}" href="${doc || ""}" title="Download document"><i class="download"></i></a>
-    </div>
-    <p style="text-align: left; max-height: 250px; overflow-y: auto;">${report}</p>
-  </div>
-`;
 }
 let timeouts = [];
 
 window.onload = () => {
-  const check = (e) => {
+  const check = e => {
     if(e.keyCode === 13){
+      const filterText = prompt("Filter Group").trim()
       while(resultElem.firstChild) {
         resultElem.removeChild(resultElem.firstChild);
       }
@@ -59,8 +54,8 @@ window.onload = () => {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
           const items = JSON.parse(httpRequest.responseText)
             .filter(item => item.document.trim() !== "" || settings.showEmpty)
-            .filter(item => !settings.policyOnly || item.wiki.includes("policy"))
-            .map(({wiki, team, case_name, report, document}) => resultTemplate(wiki, team, case_name, report, document));
+            .filter(item => !settings.policyOnly || item.wiki.includes(filterText))
+            .map(({wiki, team, case_name, report, document, time, tournament}) => resultTemplate(wiki, team, case_name, report, document, time, tournament));
             
       
           document.getElementById("counter").innerText = `${items.length} results found`;

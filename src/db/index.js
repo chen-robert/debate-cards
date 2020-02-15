@@ -8,9 +8,9 @@ const client = new pg.Client({
 client.connect();
 
 module.exports = {
-  addRound: (time, wiki, team, case_name, report, document) => {
-    client.query("INSERT INTO rounds(time, wiki, team, case_name, report, document) VALUES($1, $2, $3, $4, $5, $6) ON CONFLICT ON CONSTRAINT uq DO NOTHING", 
-      [time, wiki, team, case_name, report, document]
+  addRound: (time, wiki, team, case_name, report, document, tournament) => {
+    client.query("INSERT INTO rounds(time, wiki, team, case_name, report, document, tournament) VALUES($1, $2, $3, $4, $5, $6, $7) ON CONFLICT ON CONSTRAINT uq DO NOTHING", 
+      [time, wiki, team, case_name, report, document, tournament]
     )
   },
   searchRounds: (term, team, caseName, callback) => {

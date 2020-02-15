@@ -33,8 +33,9 @@ const load = () => {
           res.object.property.forEach(property => objData[property["$"].name] = property.value);
           
           const {space, pageName, wiki} = res.object;
-          
-          addRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0]);
+          console.log(objData["Tournament"][0])
+
+          addRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0], objData["Tournament"][0]);
           
           processRounds();
         });

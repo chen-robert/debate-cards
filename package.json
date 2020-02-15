@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js --watch app.js --watch src",
     "db:init": "node src/db/init.js",
-    "dev": "nodemon app.js",
+    "dev": "env-cmd nodemon app.js",
     "db:fix-urls": "env-cmd node src/updateUrls.js",
-    "load": "env-cmd node src/load.js"
+    "load": "env-cmd node src/load.js",
+    "migrate": "node-pg-migrate"
   },
   "author": "Robert Chen",
   "license": "MIT",
@@ -18,7 +19,8 @@
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
     "lowdb": "^1.0.0",
-    "pg": "^7.6.1",
+    "node-pg-migrate": "^4.2.2",
+    "pg": "^7.18.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "xml2js": "^0.4.19"
