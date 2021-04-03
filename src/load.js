@@ -9,7 +9,7 @@ const adapter = new FileSync('db.json')
 const db = low(adapter);
 db.defaults({ count: 0}).write();
 
-const {addRound, countRounds} = require(__dirname + "/db");
+const {addRound, dropRound, countRounds} = require(__dirname + "/db");
 
 const batchSize = 100;
 
@@ -33,9 +33,9 @@ const load = () => {
           res.object.property.forEach(property => objData[property["$"].name] = property.value);
           
           const {space, pageName, wiki} = res.object;
-          console.log(objData["Tournament"][0])
 
-          addRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0], objData["Tournament"][0]);
+          dropRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0])
+            .then(() => addRound(new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0], objData["Tournament"][0]));
           
           processRounds();
         });

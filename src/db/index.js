@@ -13,6 +13,11 @@ module.exports = {
       [time, wiki, team, case_name, report, document, tournament]
     )
   },
+  dropRound: (time, wiki, team, case_name, report, document, tournament) => {
+    return client.query("DELETE FROM rounds WHERE time = $1 AND wiki = $2 AND team = $3 AND case_name = $4 AND report = $5 AND document = $6", 
+      [time, wiki, team, case_name, report, document]
+    )
+  },
   searchRounds: (term, team, caseName, callback) => {
     client.query(`
       SELECT * FROM rounds 

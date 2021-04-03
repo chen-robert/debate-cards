@@ -3,6 +3,16 @@ const resultElem = document.getElementById(flat? "results2": "results");
 
 const resultTemplate = (wiki, school, caseName, report, doc, time, tournament) => {
 
+if(wiki === "opencaselist19") {
+  docUrl = new URL(doc)
+
+  if(docUrl.host === "opencaselist.paperlessdebate.com") {
+    docUrl.host = "opencaselist19.paperlessdebate.com"
+  }
+
+  doc = docUrl.toString()
+}
+
 let side = "Unknown";
 caseName = caseName.trim();
 if(caseName.endsWith("Aff")) {
@@ -37,7 +47,8 @@ let timeouts = [];
 window.onload = () => {
   const check = e => {
     if(e.keyCode === 13){
-      const filterText = prompt("Filter Group").trim()
+      const filterText = wikiName.value;
+
       while(resultElem.firstChild) {
         resultElem.removeChild(resultElem.firstChild);
       }
@@ -46,16 +57,28 @@ window.onload = () => {
       
       const settings = {
         showEmpty: document.getElementById("docs").checked,
-        policyOnly: document.getElementById("policy").checked
       }
       
       const httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-          const items = JSON.parse(httpRequest.responseText)
+          let items = JSON.parse(httpRequest.responseText)
             .filter(item => item.document.trim() !== "" || settings.showEmpty)
-            .filter(item => !settings.policyOnly || item.wiki.includes(filterText))
-            .map(({wiki, team, case_name, report, document, time, tournament}) => resultTemplate(wiki, team, case_name, report, document, time, tournament));
+            .filter(item => item.wiki.includes(filterText))
+            .filter(item => {
+              const itemTime = new Date(+item.time);
+
+              if (dateStart.value !== "") {
+                if (itemTime < new Date(dateStart.value)) return false;
+              }
+              if (dateEnd.value !== "") {
+                if (itemTime > new Date(dateEnd.value)) return false;
+              }
+              return true;
+            })
+
+
+          items = items.map(({wiki, team, case_name, report, document, time, tournament}) => resultTemplate(wiki, team, case_name, report, document, time, tournament));
             
       
           document.getElementById("counter").innerText = `${items.length} results found`;
@@ -64,6 +87,8 @@ window.onload = () => {
           document.getElementById("search-box").value = "";
         }
       };
+
+
       const term = encodeURIComponent(document.getElementById("search-box").value);
       const team = encodeURIComponent(document.getElementById("team").value);
       const caseName = encodeURIComponent(document.getElementById("caseName").value);
@@ -74,8 +99,4 @@ window.onload = () => {
   document.getElementById("search-box").onkeypress = check;
   document.getElementById("team").onkeypress = check;
   document.getElementById("caseName").onkeypress = check;
-
-  document.getElementById("options-button").onclick = () => {
-    document.getElementById("options").classList.toggle("clicked");
-  }
 }
