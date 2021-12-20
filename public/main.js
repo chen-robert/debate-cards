@@ -1,46 +1,51 @@
 const flat = true;
 const resultElem = document.getElementById(flat? "results2": "results");
 
+document.getElementById("refreshBtn").onclick = async () => {
+	const { res } = await (await fetch("/update", { method: "POST" })).json();
+
+	alert(res ? "Starting new update cycle": "Update cycle in progress");
+}
+
 const resultTemplate = (wiki, school, caseName, report, doc, time, tournament) => {
+	if(wiki === "opencaselist19") {
+		docUrl = new URL(doc)
 
-if(wiki === "opencaselist19") {
-  docUrl = new URL(doc)
+		if(docUrl.host === "opencaselist.paperlessdebate.com") {
+			docUrl.host = "opencaselist19.paperlessdebate.com"
+		}
 
-  if(docUrl.host === "opencaselist.paperlessdebate.com") {
-    docUrl.host = "opencaselist19.paperlessdebate.com"
-  }
+		doc = docUrl.toString()
+	}
 
-  doc = docUrl.toString()
-}
+	let side = "Unknown";
+	caseName = caseName.trim();
+	if(caseName.endsWith("Aff")) {
+		caseName = caseName.substring(0, caseName.length - "Aff".length)
+		side = "Aff";
+	} else if(caseName.endsWith("Neg")) {
+		caseName = caseName.substring(0, caseName.length - "Neg".length)
+		side = "Neg";
+	}
 
-let side = "Unknown";
-caseName = caseName.trim();
-if(caseName.endsWith("Aff")) {
-  caseName = caseName.substring(0, caseName.length - "Aff".length)
-  side = "Aff";
-} else if(caseName.endsWith("Neg")) {
-  caseName = caseName.substring(0, caseName.length - "Neg".length)
-  side = "Neg";
-}
+	let idx = doc.lastIndexOf("/") + 1;
+	const docName = doc.substring(idx);
 
-let idx = doc.lastIndexOf("/") + 1;
-const docName = doc.substring(idx);
+	report = report.split("\n").join("<br>")
 
-report = report.split("\n").join("<br>")
+	const date = new Date(+time);
 
-const date = new Date(+time);
-
-return `
-<tr>
-  <td>${date.toLocaleDateString()}</td>
-  <td style="width: 25px">${wiki}</td>
-  <td style="width: 150px">${school} ${caseName}</td>
-  <td style="width: 150px">${tournament}</td>
-  <td>${side}</td>
-  <td style="width: 150px"><a href="${doc}">${decodeURIComponent(docName)}</a></td>
-  <td style="text-align: left; width: 100%">${report}</td>
-</tr>
-`;
+	return `
+	<tr>
+		<td>${date.toLocaleDateString()}</td>
+		<td style="width: 25px">${wiki}</td>
+		<td style="width: 150px">${school} ${caseName}</td>
+		<td style="width: 150px">${tournament}</td>
+		<td>${side}</td>
+		<td style="width: 150px"><a href="${doc}">${decodeURIComponent(docName)}</a></td>
+		<td style="text-align: left; width: 100%">${report}</td>
+	</tr>
+	`;
 }
 let timeouts = [];
 
