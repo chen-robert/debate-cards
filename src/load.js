@@ -2,16 +2,15 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 const requestBase = require("request-promise").defaults({ jar: true });
 const request = async (url, times=0) => {
-  if (times === 10) {
+  if (times === 100) {
     console.log("max retries reached, aborting");
-    process.exit(1);
     return;
   }
 
   try {
     return await requestBase(url);
   } catch (e) {
-    await sleep(1000 * 5);
+    await sleep(1000 * 15);
     console.error(e);
     console.log("retrying");
     return request(url, times + 1);
@@ -38,10 +37,10 @@ const workerLoop = async () => {
     
     const objData = Object.create(null);
     res.object.property.forEach(property => objData[property["$"].name] = property.value);
-    
+
     const {space, pageName, wiki} = res.object;
     const args = [ new Date(objData["EntryDate"][0]).getTime(), wiki[0], space[0], pageName[0], objData["RoundReport"][0], objData["OpenSource"][0] ]
-      
+
     await dropRound(...args);
     await addRound(...args.concat(objData["Tournament"][0]));
   }
@@ -78,6 +77,7 @@ const workerLoop = async () => {
       case "search":
         const foundMore = await processSearch(task.idx, task.batchSize);
         if (foundMore) createSearch(task.idx + task.batchSize);
+        else console.log("Done searching");
         break;
     }
   }
