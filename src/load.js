@@ -84,8 +84,8 @@ const workerLoop = async () => {
 
   while (true) {
     if (tasks.length !== 0) {
-      await processTask(tasks[tasks.length - 1]);
-      tasks.pop();
+      await processTask(tasks[0]);
+      tasks.shift();
 
       await sleep(100);
     } else await sleep(1000 * 10);
