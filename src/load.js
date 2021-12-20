@@ -57,7 +57,7 @@ const workerLoop = async () => {
 		console.log("HERE");
     const html = await request(`https://openev.debatecoaches.org/rest/wikis/query?q=object:Caselist.RoundClass%20AND%20attdate:[NOW/DAY-180DAYS%20TO%20NOW/DAY]&number=${batchSize}&type=solr&start=${idx}`);
 
-		console.log(`row count: ${(await countRounds())[0].count}`);
+		console.log(`row count: ${await countRounds()}`);
 
 		const res = parse(html)
 

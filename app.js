@@ -16,10 +16,10 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get("/search", (req, res) => {
+app.get("/search", async (req, res) => {
   const {term, team, caseName} = req.query;
   console.log(`Searched for ${term}, ${team} / ${caseName}`);
-  searchRounds(term, team, caseName, (data) => res.send(JSON.stringify(data)));
+  res.send(await searchRounds(term, team, caseName));
 });
 
 app.post("/update", (req, res) => {

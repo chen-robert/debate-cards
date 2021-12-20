@@ -9,7 +9,7 @@ client.connect();
 
 module.exports = {
   addRound: (time, wiki, team, case_name, report, document, tournament) => {
-    client.query("INSERT INTO rounds(time, wiki, team, case_name, report, document, tournament) VALUES($1, $2, $3, $4, $5, $6, $7)", 
+    return client.query("INSERT INTO rounds(time, wiki, team, case_name, report, document, tournament) VALUES($1, $2, $3, $4, $5, $6, $7)", 
       [time, wiki, team, case_name, report, document, tournament]
     )
   },
@@ -18,8 +18,8 @@ module.exports = {
       [time, wiki, team, case_name, report, document]
     )
   },
-  searchRounds: (term, team, caseName, callback) => {
-    client.query(`
+  searchRounds: async (term, team, caseName) => {
+    return (await client.query(`
       SELECT * FROM rounds 
       WHERE UPPER(report) LIKE UPPER('%' || $1 || '%') 
       AND UPPER(team) LIKE UPPER('%' || $2 || '%')
@@ -28,14 +28,12 @@ module.exports = {
       LIMIT 2500
       `, 
       [term, team, caseName]
-    )
-    .then(res => callback(res.rows));    
+    )).rows;
   },
-  getAllRounds: (callback) => {
-    client.query(`
+  getAllRounds: async () => {
+    return (await client.query(`
       SELECT * FROM rounds
-    `)
-    .then(res => callback(res.rows));
+    `)).rows;
   },
   updateDocument: (id, doc) => {
     return client.query(`
@@ -46,9 +44,11 @@ module.exports = {
     [doc, id]
     );
   },
-  countRounds: callback => {
-    return client.query(`
+  countRounds: async () => {
+    const { rows } = await client.query(`
       SELECT COUNT(*) FROM rounds
-    `).then(res => callback(res.rows));
+    `);
+
+		return rows[0].count;
   }
 }
