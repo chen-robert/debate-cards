@@ -17,7 +17,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "cheerio": "^1.0.0-rc.2",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "node-pg-migrate": "^5.9.0",
     "pg": "^8.7.1",
     "request": "^2.88.0",
